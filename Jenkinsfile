@@ -2,41 +2,40 @@ pipeline {
     agent any
 
     environment {
-        // Reference Jenkins credentials
-        AWS_ACCESS_KEY_ID = credentials("aws_access_key_id")
-        AWS_SECRET_ACCESS_KEY = credentials("aws_secret_access_key")
+        AWS_ACCESS_KEY_ID     = credentials('AKIA5MSUBMSROIPTDLPX')  // Jenkins credentials ID
+        AWS_SECRET_ACCESS_KEY = credentials('iSNHuuIxHZ2D4oZ1MVxW1pFzhbR4GYx6eoEKT6RV')
+        AWS_DEFAULT_REGION    = 'us-east-1'  // Set your AWS region
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Correct syntax for the 'git' step
-                git(branch: "main", credentialsId: "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", url: "https://github.com/michaelrustam/michaels-terraform.git")
+                git branch: 'main', url: 'https://github.com/michaelrustam/michaels-terraform.git'
             }
         }
-        
-        stage('Init') {
+
+        stage('Terraform Init') {
             steps {
                 sh 'terraform init'
             }
         }
-        
-        stage('Plan') {
+
+        stage('Terraform Plan') {
             steps {
                 sh 'terraform plan -out=tfplan'
             }
         }
-        
-        stage('Apply') {
+
+        stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -input=false tfplan'
+                sh 'terraform apply -auto-approve tfplan'
             }
         }
     }
-
+    
     post {
         always {
-            cleanWs()
+            cleanWs() // Clean workspace after the build
         }
     }
 }
