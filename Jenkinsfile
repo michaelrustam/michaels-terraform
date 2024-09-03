@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('AKIA5MSUBMSROIPTDLPX')  // Jenkins credentials ID
-        AWS_SECRET_ACCESS_KEY = credentials('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')
+        AWS_ACCESS_KEY_ID     = credentials('aws_access_key_id')  // Jenkins credentials ID
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key') 
         AWS_DEFAULT_REGION    = 'us-east-1'  // Set your AWS region
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/michaelrustam/michaels-terraform.git'
+                git branch: 'main', credentialsId:"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" url: 'https://github.com/michaelrustam/michaels-terraform.git'
             }
         }
 
@@ -33,6 +33,21 @@ pipeline {
         }
     }
     
+stage('Wait Before Destroy') { 
+            steps { 
+                script {
+                    input message: 'Do you want to proceed with applying the Terraform destroy?', ok: 'Apply'
+                }
+            } 
+        }
+    
+        stage('Terraform Destroy') { 
+            steps {
+                sh 'terraform destroy -auto-approve -input=false'
+            }  
+        }
+    }
+
     post {
         always {
             cleanWs() // Clean workspace after the build

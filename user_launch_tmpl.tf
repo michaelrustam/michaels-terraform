@@ -24,6 +24,8 @@ resource "aws_launch_template" "team_images_launch_t" {
               EOF
   )
 
+key_name = "my-key"
+
   tag_specifications {
     resource_type = "instance"
     tags = {
@@ -58,6 +60,8 @@ resource "aws_launch_template" "team_videos_launch_t" {
               yum install -y htop
               EOF
   )
+
+key_name = "my-key"
 
   tag_specifications {
     resource_type = "instance"
